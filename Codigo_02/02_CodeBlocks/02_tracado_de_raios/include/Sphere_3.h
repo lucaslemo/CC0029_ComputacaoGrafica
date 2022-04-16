@@ -29,4 +29,7 @@ private:
   double _radius;
 };
 
+std::ostream&
+operator<<(std::ostream& os, const Sphere_3& e);
+
 #endif // SPHERE_3_H

@@ -45,9 +45,9 @@ Sphere_3::hit(const Ray_3& r, double tmin, double tmax) const
         raiz_2 = (-b - sqrt(delta))/(2*a);
         if (raiz_1 < raiz_2)
             return Hit_pair (this, raiz_1);
-        return Hit_pair (this, raiz_2);
+        else
+            return Hit_pair (this, raiz_2);
     }
-
 }
 
 Vector_3
@@ -61,4 +61,11 @@ Sphere_3::unit_normal(const Point_3& p) const
 {
   Vector_3 n = Vector_3(p - center());
   return (n / radius());
+}
+
+std::ostream&
+operator<<(std::ostream& os, const Sphere_3& e)
+{
+  os << e.center() << ' ' << e.radius();
+  return os;
 }

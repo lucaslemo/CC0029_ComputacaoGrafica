@@ -37,3 +37,22 @@ unit_normal(const Point_3& p, const Point_3& q, const Point_3& r)
   n = n/std::sqrt(n.squared_length());
   return n;
 }
+
+Point_3
+find_point (const Vector_3& v, const Point_3& q, double t){
+    Vector_3 n = Vector_3(v.x()*t,
+                          v.y()*t,
+                          v.z()*t);
+    Point_3 p = Point_3(q.x() + n.x(),
+                        q.y() + n.y(),
+                        q.z() + n.z());
+    return p;
+}
+
+double
+cos0 (const Vector_3& u, const Vector_3& v){
+    double Mu, Mv, c = dot_product(u, v);
+    Mu = sqrt(u.squared_length());
+    Mv = sqrt(v.squared_length());
+    return c/(Mu*Mv);
+}

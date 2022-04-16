@@ -46,16 +46,23 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
 {
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
-    /*Point_3 p = Point_3(r.origin().x() + (r.direction().x()*tmin),
-                        r.origin().y() + (r.direction().y()*tmin),
-                        r.origin().z() + (r.direction().z()*tmin));
+
+    /*Point_3 p = find_point(r.direction(), r.origin(), tmin);
     Point_3 c = Point_3(0.5,0.5,-1.0);
     Vector_3 n = p - c;
     Vector_3 I = cross_product(r.direction(), n) * 230;
     return Color(maxvalue(I.x(), 0.0),
                  maxvalue(I.y(), 0.0),
                  maxvalue(I.z(), 0.0));*/
-    return Color(255, 255, 255);
+
+    /*double Id = 230, rd = 1, cos;
+    Point_3 c = (0.5,0.5,-1.0);
+    Point_3 p = find_point(r.direction(), r.origin(), tmin);
+    Vector_3 n = (p - c), l = r.direction();
+    cos = maxvalue(cos0(n, l), 0.0);
+    return Color(Id*rd*cos*18, Id*rd*cos*10, Id*rd*cos*143);*/
+
+    return Color(18, 10, 143);
   } else
     return Color(0, 0, 0);
 }
