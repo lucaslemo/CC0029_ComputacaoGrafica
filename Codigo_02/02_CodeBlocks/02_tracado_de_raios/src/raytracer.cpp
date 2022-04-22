@@ -49,16 +49,34 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
 {
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
+        //Lambertiniano
+        double Id = 200, rd = 1, Ie, re = 1, cos;
+        Point_3 p = find_point(r.direction(), r.origin(), res.second);
+        Point_3 c = Point_3(0.5,0.5,-1.0);
+        Vector_3 n = (p - c)* 2.0, l = -r.direction();
+        cos = maxvalue(cos0(l, n), 0.0);
+        return Color(Id*rd*cos, Id*rd*cos, Id*rd*cos);
 
-    double Id = 200, rd = 1, Ie, re = 1, cos;
-    Point_3 p = find_point(r.direction(), r.origin(), tmin);
-    Point_3 c = Point_3(0.5,0.5,-1.0);
-    Vector_3 n = (p - c)* 2.0, l = -r.direction();
-    cos = maxvalue(cos0(l, n), 0.0);
-    return Color(Id*rd*cos, Id*rd*cos, Id*rd*cos);
+        //Colorindo apartir da Normal
+        /*Point_3 p = find_point(r.direction(), r.origin(), res.second);
+        Point_3 c = (0.5, 0.5, -1.0);
+        Vector_3 N = (p-c).unit_vector();
+        return Color(127*(N.x()+1), 127*(N.y()+1), 127*(N.z()+1));*/
 
-  } else
-    return Color(0, 0, 0);
+        //Colorindo apartir de uma cor sólida
+        //return Color(255, 255, 255);
+  } else{
+        //Fundo degrade de azul
+        /*double fn = sqrt(r.direction().squared_length());
+        double f = 0.5*((r.direction().y()/fn) + 1.0);
+        double cor[3] = {(1.0-f)*255 + f*127,
+                         ((1.0-f)*255 + f*178.5),
+                         (1.0-f)*255 + f*255};
+        return Color(cor[0], cor[1], cor[2]);*/
+
+        //Fundo Preto
+        return Color(0, 0, 0);
+  }
 }
 
 Ray_3 construct_ray(int nx, int ny, int i, int j)

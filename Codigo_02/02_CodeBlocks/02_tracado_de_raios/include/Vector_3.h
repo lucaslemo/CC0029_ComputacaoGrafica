@@ -23,6 +23,7 @@ public:
 
   // Others
   double squared_length() const;
+  Vector_3 unit_vector() const;
 
 private:
   double _x, _y, _z;

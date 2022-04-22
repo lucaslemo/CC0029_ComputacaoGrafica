@@ -1,4 +1,5 @@
 #include "../include/Vector_3.h"
+#include <math.h>
 
 // Constructors
 Vector_3::Vector_3(double x, double y, double z)
@@ -61,6 +62,12 @@ double
 Vector_3::squared_length() const
 {
   return x()*x() + y()*y() + z()*z();
+}
+
+Vector_3
+Vector_3::unit_vector() const{
+    double n = sqrt(squared_length());
+    return Vector_3(x()/n, y()/n, z()/n);
 }
 
 Vector_3
