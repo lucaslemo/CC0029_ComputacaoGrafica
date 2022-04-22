@@ -44,18 +44,33 @@ double maxvalue(double a, double b){
         return b;
 }
 
+double clamp(double a){
+    if (a > 255)
+        return 255.0;
+    else if (a < 0)
+        return 0.0;
+    else
+        return a;
+}
+
 Color trace(const Ray_3& r, std::vector<Object*>& object,
     double tmin = 0.0, double tmax = INF)
 {
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
-        //Lambertiniano
-        double Id = 200, rd = 1, Ie, re = 1, cos;
+
+        double Id = 100, rd = 0.5, Ia = 100, ra = 0.3, Ie = 100, re = 1.0, cos, cos2;
         Point_3 p = find_point(r.direction(), r.origin(), res.second);
         Point_3 c = Point_3(0.5,0.5,-1.0);
         Vector_3 n = (p - c)* 2.0, l = -r.direction();
+        Vector_3 d = (2 * dot_product(l, n) * n);
+        Vector_3 r = Vector_3(d.x()-l.x(), d.y()-l.y(), d.z()-l.z());
+        Vector_3 v = Vector_3(0, 1, 1);
         cos = maxvalue(cos0(l, n), 0.0);
-        return Color(Id*rd*cos, Id*rd*cos, Id*rd*cos);
+        cos2 = maxvalue(cos0(r, v), 0.0);
+        return Color(clamp((Id*rd*cos + Ia*ra + pow(Ie*re*cos2, 1)) * 1.0),
+                     clamp((Id*rd*cos + Ia*ra + pow(Ie*re*cos2, 1)) * 1.0) ,
+                     clamp((Id*rd*cos + Ia*ra + pow(Ie*re*cos2, 1)) * 1.0));
 
         //Colorindo apartir da Normal
         /*Point_3 p = find_point(r.direction(), r.origin(), res.second);
@@ -108,8 +123,9 @@ int main(int argc, char *argv[])
   Image image(400, 400);
 
   // Cena contém apenas uma esfera
+
   object.push_back(new Sphere_3(Point_3(0.5,0.5,-1.0), 0.6));
-  //object.push_back(new Sphere_3(Point_3(0.0,0.0,0.0), 0.5));
+  //object.push_back(new Sphere_3(Point_3(0.5,0.5,2.0), 0.2));
 
   for (int i = 0; i < image.height(); ++i) {
     for (int j = 0; j < image.width(); ++j) {
