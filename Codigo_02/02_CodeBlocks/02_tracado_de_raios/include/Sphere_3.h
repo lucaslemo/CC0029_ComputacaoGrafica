@@ -9,6 +9,7 @@
 #include "../include/Object.h"
 #include "../include/euclidean_constructions_3.h"
 #include "../include/number_utils.h"
+#include "../include/Color.h"
 
 class Sphere_3 : public Object
 {
@@ -28,8 +29,5 @@ private:
   Point_3 _center;
   double _radius;
 };
-
-std::ostream&
-operator<<(std::ostream& os, const Sphere_3& e);
 
 #endif // SPHERE_3_H

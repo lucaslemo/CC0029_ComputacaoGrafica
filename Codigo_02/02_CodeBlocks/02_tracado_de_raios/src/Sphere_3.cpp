@@ -62,10 +62,3 @@ Sphere_3::unit_normal(const Point_3& p) const
   Vector_3 n = Vector_3(p - center());
   return (n / radius());
 }
-
-std::ostream&
-operator<<(std::ostream& os, const Sphere_3& e)
-{
-  os << e.center() << ' ' << e.radius();
-  return os;
-}

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -9,6 +10,8 @@
 #include "../include/Ray_3.h"
 #include "../include/Color.h"
 #include "../include/Image.h"
+
+using namespace std;
 
 std::string program_name;
 
@@ -47,22 +50,13 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
 
-    /*Point_3 p = find_point(r.direction(), r.origin(), tmin);
-    Point_3 c = Point_3(0.5,0.5,-1.0);
-    Vector_3 n = p - c;
-    Vector_3 I = cross_product(r.direction(), n) * 230;
-    return Color(maxvalue(I.x(), 0.0),
-                 maxvalue(I.y(), 0.0),
-                 maxvalue(I.z(), 0.0));*/
-
-    /*double Id = 230, rd = 1, cos;
-    Point_3 c = (0.5,0.5,-1.0);
+    double Id = 200, rd = 1, Ie, re = 1, cos;
     Point_3 p = find_point(r.direction(), r.origin(), tmin);
-    Vector_3 n = (p - c), l = r.direction();
-    cos = maxvalue(cos0(n, l), 0.0);
-    return Color(Id*rd*cos*18, Id*rd*cos*10, Id*rd*cos*143);*/
+    Point_3 c = Point_3(0.5,0.5,-1.0);
+    Vector_3 n = (p - c)* 2.0, l = -r.direction();
+    cos = maxvalue(cos0(l, n), 0.0);
+    return Color(Id*rd*cos, Id*rd*cos, Id*rd*cos);
 
-    return Color(18, 10, 143);
   } else
     return Color(0, 0, 0);
 }
@@ -143,8 +137,10 @@ int main(int argc, char *argv[])
 
   glfwTerminate();
 
-  //image.write_ppm();
 
+  std::ofstream file("image.ppm");
+  image.write_ppm(file);
+  file.close();
 
   return 0;
 }
