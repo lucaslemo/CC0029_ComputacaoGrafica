@@ -37,13 +37,6 @@ hit(const Ray_3& r, std::vector<Object*>& object,
   return closest;
 }
 
-double maxvalue(double a, double b){
-    if (a >= b)
-        return a;
-    else
-        return b;
-}
-
 double clamp(double a){
     if (a > 255)
         return 255.0;
@@ -59,23 +52,23 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
 
-        double Id = 100, rd = 0.5, Ia = 100, ra = 0.3, Ie = 100, re = 1.0, cos, cos2;
+        double Id = 200, rd = 0.8, Ia = 100, ra = 0.6, Ie = 200, re = 1.0, ns = 30, cos, cos2;
         Point_3 p = find_point(r.direction(), r.origin(), res.second);
-        Point_3 c = Point_3(0.5,0.5,-1.0);
-        Vector_3 n = (p - c)* 2.0, l = -r.direction();
+        Point_3 luz = Point_3(0, 0, 0);
+        Vector_3 n = res.first->unit_normal(p);
+        Vector_3 l = luz - p;
         Vector_3 d = (2 * dot_product(l, n) * n);
         Vector_3 r = Vector_3(d.x()-l.x(), d.y()-l.y(), d.z()-l.z());
-        Vector_3 v = Vector_3(0, 1, 1);
-        cos = maxvalue(cos0(l, n), 0.0);
-        cos2 = maxvalue(cos0(r, v), 0.0);
-        return Color(clamp((Id*rd*cos + Ia*ra + pow(Ie*re*cos2, 1)) * 1.0),
-                     clamp((Id*rd*cos + Ia*ra + pow(Ie*re*cos2, 1)) * 1.0) ,
-                     clamp((Id*rd*cos + Ia*ra + pow(Ie*re*cos2, 1)) * 1.0));
+        Vector_3 v = Vector_3(-0.5, -0.5, 1);
+        cos = std::max(cos0(l, n), 0.0);
+        cos2 = std::max(cos0(r, v), 0.0);
+        return Color(clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)),
+                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)) ,
+                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)));
 
         //Colorindo apartir da Normal
         /*Point_3 p = find_point(r.direction(), r.origin(), res.second);
-        Point_3 c = (0.5, 0.5, -1.0);
-        Vector_3 N = (p-c).unit_vector();
+        Vector_3 N = res.first->unit_normal(p);
         return Color(127*(N.x()+1), 127*(N.y()+1), 127*(N.z()+1));*/
 
         //Colorindo apartir de uma cor sólida
@@ -124,8 +117,8 @@ int main(int argc, char *argv[])
 
   // Cena contém apenas uma esfera
 
-  object.push_back(new Sphere_3(Point_3(0.5,0.5,-1.0), 0.6));
-  //object.push_back(new Sphere_3(Point_3(0.5,0.5,2.0), 0.2));
+  object.push_back(new Sphere_3(Point_3(0.5, 0.5, -1.0), 0.6));
+  object.push_back(new Sphere_3(Point_3(-0.4, -0.5, 1.0), 0.5));
 
   for (int i = 0; i < image.height(); ++i) {
     for (int j = 0; j < image.width(); ++j) {
@@ -172,9 +165,9 @@ int main(int argc, char *argv[])
   glfwTerminate();
 
 
-  std::ofstream file("image.ppm");
+  /*std::ofstream file("image.ppm");
   image.write_ppm(file);
-  file.close();
+  file.close();*/
 
   return 0;
 }

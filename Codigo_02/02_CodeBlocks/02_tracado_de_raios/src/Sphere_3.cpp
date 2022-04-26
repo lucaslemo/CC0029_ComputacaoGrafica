@@ -41,8 +41,8 @@ Sphere_3::hit(const Ray_3& r, double tmin, double tmax) const
         return Hit_pair (this, raiz_1);
     }
     else{
-        raiz_1 = (-b + sqrt(delta))/(2*a);
-        raiz_2 = (-b - sqrt(delta))/(2*a);
+        raiz_1 = (-b + std::sqrt(delta))/(2*a);
+        raiz_2 = (-b - std::sqrt(delta))/(2*a);
         if (raiz_1 < raiz_2)
             return Hit_pair (this, raiz_1);
         else
