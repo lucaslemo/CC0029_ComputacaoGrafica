@@ -52,9 +52,9 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
 
-        double Id = 200, rd = 0.8, Ia = 100, ra = 0.6, Ie = 200, re = 1.0, ns = 30, cos, cos2;
+        double Id = 200, rd = 0.8, Ia = 100, ra = 0.6, Ie = 50, re = 1.0, ns = 30, cos, cos2;
         Point_3 p = find_point(r.direction(), r.origin(), res.second);
-        Point_3 luz = Point_3(0, 0, 0);
+        Point_3 luz = Point_3(0.0, -1.0, -1.0);
         Vector_3 n = res.first->unit_normal(p);
         Vector_3 l = luz - p;
         Vector_3 d = (2 * dot_product(l, n) * n);
@@ -62,6 +62,15 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
         Vector_3 v = Vector_3(-0.5, -0.5, 1);
         cos = std::max(cos0(l, n), 0.0);
         cos2 = std::max(cos0(r, v), 0.0);
+
+        Point_3 perro = find_point(n, p, 1e-8);
+        Ray_3 olho =  Ray_3(perro, l);
+        Object::Hit_pair sombra = res.first->hit(olho, 1e-8, INF);
+        if (sombra.first != NULL){
+          re = 0.0;
+          rd = 0.0;
+        }
+
         return Color(clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)),
                      clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)) ,
                      clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)));
@@ -113,12 +122,17 @@ int main(int argc, char *argv[])
 {
   //Object::Hit_pair res;
   std::vector<Object*> object;
-  Image image(400, 400);
+  Image image(500, 500);
 
   // Cena contém apenas uma esfera
 
-  object.push_back(new Sphere_3(Point_3(0.5, 0.5, -1.0), 0.6));
-  object.push_back(new Sphere_3(Point_3(-0.4, -0.5, 1.0), 0.5));
+  // object.push_back(new Sphere_3(Point_3(-0.5, 0.5, -2.0), 0.5));
+  // object.push_back(new Sphere_3(Point_3(-0.1, 0.9, -2.0), 0.3));
+  // object.push_back(new Sphere_3(Point_3(-0.1, 0.1, -2.0), 0.3));
+  // object.push_back(new Sphere_3(Point_3(1.0, -1.0, -1.0), 0.1));
+  // object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.1));
+  object.push_back(new Sphere_3(Point_3(0.0, -0.3, -1.0), 0.3));
+  object.push_back(new Sphere_3(Point_3(0.0, 0.4, -1.0), 0.3));
 
   for (int i = 0; i < image.height(); ++i) {
     for (int j = 0; j < image.width(); ++j) {

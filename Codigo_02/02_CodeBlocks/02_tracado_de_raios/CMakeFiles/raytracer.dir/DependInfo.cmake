@@ -4,14 +4,14 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Color.cpp" "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Color.cpp.o"
-  "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Image.cpp" "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Image.cpp.o"
-  "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Point_3.cpp" "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Point_3.cpp.o"
-  "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Ray_3.cpp" "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Ray_3.cpp.o"
-  "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Sphere_3.cpp" "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Sphere_3.cpp.o"
-  "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Vector_3.cpp" "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Vector_3.cpp.o"
-  "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/euclidean_constructions_3.cpp" "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/euclidean_constructions_3.cpp.o"
-  "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/raytracer.cpp" "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/raytracer.cpp.o"
+  "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Color.cpp" "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Color.cpp.o"
+  "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Image.cpp" "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Image.cpp.o"
+  "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Point_3.cpp" "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Point_3.cpp.o"
+  "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Ray_3.cpp" "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Ray_3.cpp.o"
+  "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Sphere_3.cpp" "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Sphere_3.cpp.o"
+  "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/Vector_3.cpp" "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/Vector_3.cpp.o"
+  "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/euclidean_constructions_3.cpp" "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/euclidean_constructions_3.cpp.o"
+  "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/src/raytracer.cpp" "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/CMakeFiles/raytracer.dir/src/raytracer.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

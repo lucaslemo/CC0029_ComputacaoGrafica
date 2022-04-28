@@ -33,21 +33,24 @@ Sphere_3::hit(const Ray_3& r, double tmin, double tmax) const
 
     delta = pow(b, 2) - (4*a*c);
 
-    if (delta < 0){
-        return Hit_pair (NULL, 1);
-    }
-    else if (delta == 0){
+    if (delta == 0){
         raiz_1 = (-b)/(2*a);
-        return Hit_pair (this, raiz_1);
+        if (tmin <= raiz_1 && raiz_1 <= tmax)
+          return Hit_pair (this, raiz_1);
     }
     else{
         raiz_1 = (-b + std::sqrt(delta))/(2*a);
         raiz_2 = (-b - std::sqrt(delta))/(2*a);
-        if (raiz_1 < raiz_2)
+        if (raiz_1 < raiz_2){
+          if (tmin <= raiz_1 && raiz_1 <= tmax)
             return Hit_pair (this, raiz_1);
-        else
-            return Hit_pair (this, raiz_2);
+        }   
+        else{
+          if (tmin <= raiz_2 && raiz_2 <= tmax)
+              return Hit_pair (this, raiz_2);
+        }  
     }
+    return Hit_pair (NULL, 1);
 }
 
 Vector_3

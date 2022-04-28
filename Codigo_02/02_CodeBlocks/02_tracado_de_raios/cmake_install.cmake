@@ -1,4 +1,4 @@
-# Install script for directory: /home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios
+# Install script for directory: /home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

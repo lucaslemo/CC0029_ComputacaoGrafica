@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/aluno/Downloads/CompGrafica/Codigo_02/02_CodeBlocks/02_tracado_de_raios/include
+CXX_INCLUDES = -I/home/aluno/Downloads/Pasta/Codigo_02/02_CodeBlocks/02_tracado_de_raios/include
 
 CXX_FLAGS = 
 
