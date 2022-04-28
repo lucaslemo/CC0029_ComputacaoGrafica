@@ -54,7 +54,7 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
 
         double Id = 200, rd = 0.8, Ia = 100, ra = 0.6, Ie = 50, re = 1.0, ns = 30, cos, cos2;
         Point_3 p = find_point(r.direction(), r.origin(), res.second);
-        Point_3 luz = Point_3(0.0, -1.0, -1.0);
+        Point_3 luz = Point_3(1.0, 0.0, -1.0);
         Vector_3 n = res.first->unit_normal(p);
         Vector_3 l = luz - p;
         Vector_3 d = (2 * dot_product(l, n) * n);
@@ -63,8 +63,7 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
         cos = std::max(cos0(l, n), 0.0);
         cos2 = std::max(cos0(r, v), 0.0);
 
-        Point_3 perro = find_point(n, p, 1e-8);
-        Ray_3 olho =  Ray_3(perro, l);
+        Ray_3 olho =  Ray_3(p, l);
         Object::Hit_pair sombra = res.first->hit(olho, 1e-8, INF);
         if (sombra.first != NULL){
           re = 0.0;
@@ -131,8 +130,10 @@ int main(int argc, char *argv[])
   // object.push_back(new Sphere_3(Point_3(-0.1, 0.1, -2.0), 0.3));
   // object.push_back(new Sphere_3(Point_3(1.0, -1.0, -1.0), 0.1));
   // object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.1));
-  object.push_back(new Sphere_3(Point_3(0.0, -0.3, -1.0), 0.3));
-  object.push_back(new Sphere_3(Point_3(0.0, 0.4, -1.0), 0.3));
+  object.push_back(new Sphere_3(Point_3(0.0, 0.0, -1.0), 0.3));
+  object.push_back(new Sphere_3(Point_3(-0.4, 0.0, -1.0), 0.1));
+  object.push_back(new Sphere_3(Point_3(0.0, -0.5, -1.0), 0.1));
+  
 
   for (int i = 0; i < image.height(); ++i) {
     for (int j = 0; j < image.width(); ++j) {
