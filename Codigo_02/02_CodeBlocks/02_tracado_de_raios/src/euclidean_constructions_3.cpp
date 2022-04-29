@@ -1,5 +1,6 @@
 #include <cmath>
 #include "../include/euclidean_constructions_3.h"
+#include "../include/number_utils.h"
 
 Vector_3
 cross_product(const Vector_3& u, const Vector_3& v)
@@ -55,4 +56,89 @@ cos0 (const Vector_3& u, const Vector_3& v){
     Mu = sqrt(u.squared_length());
     Mv = sqrt(v.squared_length());
     return c/(Mu*Mv);
+}
+
+Point_3
+rotacaox (const Point_3& p, double ang){
+    double m[3][3];
+    double coseno = std::cos(ang*PI/180);
+    double seno = std::sin(ang*PI/180);
+    if (coseno < 1.0e-3)
+        coseno = 0.0;
+    for (int l = 0; l < 3; l++){
+        for (int c = 0; c < 3; c++){
+            if ((l == 0 && c == 0) || (l == 2  && c == 2))
+                m[l][c] = coseno;
+            else if (l == c && l == 1)
+                m[l][c] = 1.0;
+            else if (l == 0 && c == 2)
+                m[l][c] = seno;
+            else if (l == 2 && c == 0)
+                m[l][c] = -seno;
+            else
+                m[l][c] = 0.0;
+        }
+    }
+    return Point_3(p.x()*m[0][0] + p.y()*m[0][1] + p.z()*m[0][2],
+                   p.x()*m[1][0] + p.y()*m[1][1] + p.z()*m[1][2],
+                   p.x()*m[2][0] + p.y()*m[2][1] + p.x()*m[2][2]);
+}
+
+Point_3
+rotacaoy (const Point_3& p, double ang){
+    double m[3][3];
+    double coseno = std::cos(ang*PI/180);
+    double seno = std::sin(ang*PI/180);
+    if (coseno < 1.0e-3)
+        coseno = 0.0;
+    for (int l = 0; l < 3; l++){
+        for (int c = 0; c < 3; c++){
+            if ((l == 1 && c == 1) || (l == 2  && c == 2))
+                m[l][c] = coseno;
+            else if (l == c && l == 0)
+                m[l][c] = 1.0;
+            else if (l == 2 && c == 1)
+                m[l][c] = seno;
+            else if (l == 1 && c == 2)
+                m[l][c] = -seno;
+            else
+                m[l][c] = 0.0;
+        }
+    }
+    return Point_3(p.x()*m[0][0] + p.y()*m[0][1] + p.z()*m[0][2],
+                   p.x()*m[1][0] + p.y()*m[1][1] + p.z()*m[1][2],
+                   p.x()*m[2][0] + p.y()*m[2][1] + p.x()*m[2][2]);
+}
+
+Point_3
+rotacaoz (const Point_3& p, double ang){
+    double m[3][3];
+    double coseno = std::cos(ang*PI/180);
+    double seno = std::sin(ang*PI/180);
+    if (coseno < 1.0e-3)
+        coseno = 0.0;
+    for (int l = 0; l < 3; l++){
+        for (int c = 0; c < 3; c++){
+            if (l == c  && l == 0  && l == 1)
+                m[l][c] = coseno;
+            else if (l == c && l == 2)
+                m[l][c] = 1.0;
+            else if (l == 1 && c == 0)
+                m[l][c] = seno;
+            else if (l == 0 && c == 1)
+                m[l][c] = -seno;
+            else
+                m[l][c] = 0.0;
+        }
+    }
+    for (int l = 0; l < 3; l++){
+        for (int c = 0; c < 3; c++){
+            std::cout << m[l][c] << '\t';
+        }
+        std::cout << std::endl;
+    }
+    std::cout << p.y() << std::endl;
+    return Point_3(p.x()*m[0][0] + p.y()*m[0][1] + p.z()*m[0][2],
+                   p.x()*m[1][0] + p.y()*m[1][1] + p.z()*m[1][2],
+                   p.x()*m[2][0] + p.y()*m[2][1] + p.x()*m[2][2]);
 }

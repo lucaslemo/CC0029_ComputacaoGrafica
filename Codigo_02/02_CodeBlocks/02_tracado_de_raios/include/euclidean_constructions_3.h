@@ -25,4 +25,13 @@ find_point (const Vector_3& v, const Point_3& q, double t);
 double
 cos0 (const Vector_3& u, const Vector_3& v);
 
+Point_3
+rotacaox (const Point_3& p, double ang);
+
+Point_3
+rotacaoy (const Point_3& p, double ang);
+
+Point_3
+rotacaoz (const Point_3& p, double ang);
+
 #endif // EUCLIDEAN_CONSTRUCTIONS_3_H

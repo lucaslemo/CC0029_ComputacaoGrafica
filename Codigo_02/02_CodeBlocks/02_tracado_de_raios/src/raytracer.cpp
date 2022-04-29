@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include "../include/Sphere_3.h"
+#include "../include/Triangles_3.h"
 #include "../include/Ray_3.h"
 #include "../include/Color.h"
 #include "../include/Image.h"
@@ -14,7 +15,6 @@
 using namespace std;
 
 std::string program_name;
-
 
 int maxval;
 GLsizei width, height;
@@ -52,27 +52,27 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
 
-        double Id = 200, rd = 0.8, Ia = 100, ra = 0.6, Ie = 50, re = 1.0, ns = 30, cos, cos2;
+        double Id = 100, rd = 0.6, Ia = 100, ra = 0.7, Ie = 100, re = 0.3, ns = 30, cos, cos2;
         Point_3 p = find_point(r.direction(), r.origin(), res.second);
-        Point_3 luz = Point_3(1.0, 0.0, -1.0);
+        Point_3 luz = Point_3(1.0, -1.0, 1.0);
         Vector_3 n = res.first->unit_normal(p);
         Vector_3 l = luz - p;
         Vector_3 d = (2 * dot_product(l, n) * n);
         Vector_3 r = Vector_3(d.x()-l.x(), d.y()-l.y(), d.z()-l.z());
-        Vector_3 v = Vector_3(-0.5, -0.5, 1);
+        Vector_3 v = Vector_3(0.0, 0.0, 1);
         cos = std::max(cos0(l, n), 0.0);
         cos2 = std::max(cos0(r, v), 0.0);
-
-        Ray_3 olho =  Ray_3(p, l);
-        Object::Hit_pair sombra = res.first->hit(olho, 1e-8, INF);
+        /*Ray_3 olho =  Ray_3(p, l);
+        Object::Hit_pair sombra = res.first->hit(olho, 0, INF);
         if (sombra.first != NULL){
+          //std::cout << "Tem sombra!" << std::endl;
           re = 0.0;
           rd = 0.0;
-        }
+        }*/
 
-        return Color(clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)),
-                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)) ,
-                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * (255.0/255.0)));
+        return Color(clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns))),
+                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns))) ,
+                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns))));
 
         //Colorindo apartir da Normal
         /*Point_3 p = find_point(r.direction(), r.origin(), res.second);
@@ -123,17 +123,43 @@ int main(int argc, char *argv[])
   std::vector<Object*> object;
   Image image(500, 500);
 
-  // Cena contém apenas uma esfera
+  Point_3 centro = Point_3(0.0, 0.0, -1.0);
+  Point_3 teste = Point_3(0.5, -0.5, -1.0);
+  std::cout << teste << std::endl;
+  std::cout << rotacaoz(teste, 90) << std::endl;
+  double sizeTriangulo = 0.5;
 
-  // object.push_back(new Sphere_3(Point_3(-0.5, 0.5, -2.0), 0.5));
-  // object.push_back(new Sphere_3(Point_3(-0.1, 0.9, -2.0), 0.3));
-  // object.push_back(new Sphere_3(Point_3(-0.1, 0.1, -2.0), 0.3));
-  // object.push_back(new Sphere_3(Point_3(1.0, -1.0, -1.0), 0.1));
-  // object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.1));
-  object.push_back(new Sphere_3(Point_3(0.0, 0.0, -1.0), 0.3));
-  object.push_back(new Sphere_3(Point_3(-0.4, 0.0, -1.0), 0.1));
-  object.push_back(new Sphere_3(Point_3(0.0, -0.5, -1.0), 0.1));
-  
+  /*object.push_back(new Triangles_3(centro,
+                                   Point_3(-sizeTriangulo, -sizeTriangulo, -1.0),
+                                   Point_3(-sizeTriangulo, sizeTriangulo, -1.0)));
+  object.push_back(new Triangles_3(centro,
+                                   Point_3(-sizeTriangulo, sizeTriangulo, -1.0),
+                                   Point_3(sizeTriangulo, sizeTriangulo, -1.0)));
+  object.push_back(new Triangles_3(centro,
+                                   Point_3(sizeTriangulo, sizeTriangulo, -1.0),
+                                   Point_3(sizeTriangulo, -sizeTriangulo, -1.0)));
+  object.push_back(new Triangles_3(centro,
+                                   Point_3(sizeTriangulo, -sizeTriangulo, -1.0),
+                                   Point_3(-sizeTriangulo, -sizeTriangulo, -1.0)));*/
+
+  //object.push_back(new Sphere_3(Point_3(-0.5, 0.5, -2.0), 0.5));
+  //object.push_back(new Sphere_3(Point_3(-0.1, 0.9, -2.0), 0.3));
+  //object.push_back(new Sphere_3(Point_3(-0.1, 0.1, -2.0), 0.3));
+  //object.push_back(new Sphere_3(Point_3(1.0, -1.0, -1.0), 0.1));
+  //object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.1));
+  //object.push_back(new Sphere_3(Point_3(0.0, 0.0, -1.0), 0.3));
+  //object.push_back(new Sphere_3(Point_3(-0.4, 0.0, -1.0), 0.1));
+  //object.push_back(new Sphere_3(Point_3(0.5, 0.5, -1.0), 0.1));
+  //object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.1));
+  //object.push_back(new Sphere_3(Point_3(0.5, 0.0, -1.0), 0.3));
+  //object.push_back(new Sphere_3(Point_3(0.0, 0.5, -1.3), 0.4));
+  //object.push_back(new Sphere_3(Point_3(-0.8, 0.8, -1.0), 0.2));
+  //object.push_back(new Sphere_3(Point_3(0.8, 0.8, -1.0), 0.2));
+  //object.push_back(new Sphere_3(rotacaoz(Point_3(0.5, -0.5, -1.0), 90), 0.2));
+  //object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.2));
+  //object.push_back(new Sphere_3(Point_3(0.5, 0.5, -1.0), 0.2));
+  //object.push_back(new Sphere_3(Point_3(0.5, 0.0, -1.0), 0.2));
+  //object.push_back(new Sphere_3(Point_3(-0.5, -0.5, -1.0), 0.2));
 
   for (int i = 0; i < image.height(); ++i) {
     for (int j = 0; j < image.width(); ++j) {
@@ -180,9 +206,9 @@ int main(int argc, char *argv[])
   glfwTerminate();
 
 
-  /*std::ofstream file("image.ppm");
+  std::ofstream file("image.ppm");
   image.write_ppm(file);
-  file.close();*/
+  file.close();
 
   return 0;
 }

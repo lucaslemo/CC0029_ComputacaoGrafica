@@ -1,4 +1,5 @@
 #include "../include/Image.h"
+#include <cmath>
 
 Image::Image()
 { }
@@ -41,14 +42,15 @@ void
 Image::write_ppm(std::ostream& os) const
 {
   os << "P3\n";
-  os << width() << ' ' << height() << std::endl;
+  os << width() << '\n' << height() << std::endl;
   os << "255\n";
 
   for (int i = height() - 1; i >= 0; --i) {
     for (int j = 0; j < width(); ++j) {
-      os << _pixels[i * width() + j] << ' ';
+      os << lround(_pixels[i * width() + j].red()) << '\n';
+      os << lround(_pixels[i * width() + j].green()) << '\n';
+      os << lround(_pixels[i * width() + j].blue()) << std::endl;
     }
-    os << std::endl;
   }
 }
 
