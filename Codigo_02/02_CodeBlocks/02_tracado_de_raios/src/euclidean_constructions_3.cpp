@@ -81,7 +81,7 @@ rotacaox (const Point_3& p, double ang){
     }
     return Point_3(p.x()*m[0][0] + p.y()*m[0][1] + p.z()*m[0][2],
                    p.x()*m[1][0] + p.y()*m[1][1] + p.z()*m[1][2],
-                   p.x()*m[2][0] + p.y()*m[2][1] + p.x()*m[2][2]);
+                   p.x()*m[2][0] + p.y()*m[2][1] + p.z()*m[2][2]);
 }
 
 Point_3
@@ -107,7 +107,7 @@ rotacaoy (const Point_3& p, double ang){
     }
     return Point_3(p.x()*m[0][0] + p.y()*m[0][1] + p.z()*m[0][2],
                    p.x()*m[1][0] + p.y()*m[1][1] + p.z()*m[1][2],
-                   p.x()*m[2][0] + p.y()*m[2][1] + p.x()*m[2][2]);
+                   p.x()*m[2][0] + p.y()*m[2][1] + p.z()*m[2][2]);
 }
 
 Point_3
@@ -115,11 +115,11 @@ rotacaoz (const Point_3& p, double ang){
     double m[3][3];
     double coseno = std::cos(ang*PI/180);
     double seno = std::sin(ang*PI/180);
-    if (coseno < 1.0e-3)
+    if (0 < coseno && coseno < 1.0e-6)
         coseno = 0.0;
     for (int l = 0; l < 3; l++){
         for (int c = 0; c < 3; c++){
-            if (l == c  && l == 0  && l == 1)
+            if ((l == 0 && c == 0) || (l == 1  && c == 1))
                 m[l][c] = coseno;
             else if (l == c && l == 2)
                 m[l][c] = 1.0;
@@ -131,14 +131,27 @@ rotacaoz (const Point_3& p, double ang){
                 m[l][c] = 0.0;
         }
     }
-    for (int l = 0; l < 3; l++){
-        for (int c = 0; c < 3; c++){
-            std::cout << m[l][c] << '\t';
-        }
-        std::cout << std::endl;
-    }
-    std::cout << p.y() << std::endl;
     return Point_3(p.x()*m[0][0] + p.y()*m[0][1] + p.z()*m[0][2],
                    p.x()*m[1][0] + p.y()*m[1][1] + p.z()*m[1][2],
-                   p.x()*m[2][0] + p.y()*m[2][1] + p.x()*m[2][2]);
+                   p.x()*m[2][0] + p.y()*m[2][1] + p.z()*m[2][2]);
+}
+
+Point_3
+moverx (const Point_3& p, double dist){
+    return Point_3(p.x(), p.y() + dist, p.z());
+}
+
+Point_3
+movery (const Point_3& p, double dist){
+    return Point_3(p.x() + dist, p.y(), p.z());
+}
+
+Point_3
+moverz (const Point_3& p, double dist){
+    return Point_3(p.x(), p.y(), p.z() + dist);
+}
+
+Point_3
+transladar (const Point_3& p, double x, double y){
+    return Point_3(movery(moverx(p, x), y));
 }

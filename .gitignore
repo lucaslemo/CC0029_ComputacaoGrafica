@@ -2,6 +2,7 @@
 *.cbp
 *.depend
 *.layout
+*.jpeg
 04-dispositivos-e-sistemas-graficos/
 02-tracado-de-raios/
 bin/

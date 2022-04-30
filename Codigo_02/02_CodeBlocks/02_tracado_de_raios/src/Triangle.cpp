@@ -1,30 +1,30 @@
-#include "../include/Triangles_3.h"
+#include "../include/Triangle_3.h"
 #include "../include/euclidean_constructions_3.h"
 
-Triangles_3::Triangles_3(const Point_3& p, const Point_3& q, const Point_3& r)
+Triangle_3::Triangle_3(const Point_3& p, const Point_3& q, const Point_3& r)
   : _v1(p), _v2(q), _v3(r)
 { }
 
 const Point_3&
-Triangles_3::v1() const
+Triangle_3::v1() const
 {
   return _v1;
 }
 
 const Point_3&
-Triangles_3::v2() const
+Triangle_3::v2() const
 {
   return _v2;
 }
 
 const Point_3&
-Triangles_3::v3() const
+Triangle_3::v3() const
 {
   return _v3;
 }
 
-Triangles_3::Hit_pair
-Triangles_3::hit(const Ray_3& r, double tmin, double tmax) const
+Triangle_3::Hit_pair
+Triangle_3::hit(const Ray_3& r, double tmin, double tmax) const
 {
     Vector_3 a1 = this->v2() - this->v1();
     Vector_3 a2 = this->v3() - this->v2();
@@ -56,7 +56,7 @@ Triangles_3::hit(const Ray_3& r, double tmin, double tmax) const
 }
 
 Vector_3
-Triangles_3::normal(const Point_3& p) const
+Triangle_3::normal(const Point_3& p) const
 {
     Vector_3 v1v2 = this->v2() - this->v1();
     Vector_3 v1vp = this->v3() - this->v1();
@@ -64,7 +64,7 @@ Triangles_3::normal(const Point_3& p) const
 }
 
 Vector_3
-Triangles_3::unit_normal(const Point_3& p) const
+Triangle_3::unit_normal(const Point_3& p) const
 {
     Vector_3 v1v2 = this->v2() - this->v1();
     Vector_3 v1vp = this->v3() - this->v1();

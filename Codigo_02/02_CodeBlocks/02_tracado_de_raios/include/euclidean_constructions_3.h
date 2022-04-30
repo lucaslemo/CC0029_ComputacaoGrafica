@@ -34,4 +34,16 @@ rotacaoy (const Point_3& p, double ang);
 Point_3
 rotacaoz (const Point_3& p, double ang);
 
+Point_3
+moverx (const Point_3& p, double dist);
+
+Point_3
+movery (const Point_3& p, double dist);
+
+Point_3
+moverz (const Point_3& p, double dist);
+
+Point_3
+transladar (const Point_3& p, double x, double y);
+
 #endif // EUCLIDEAN_CONSTRUCTIONS_3_H

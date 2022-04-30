@@ -11,12 +11,12 @@
 #include "../include/number_utils.h"
 #include "../include/Color.h"
 
-class Triangles_3 : public Object
+class Triangle_3 : public Object
 {
 public:
   // Constructors
-  Triangles_3();
-  Triangles_3(const Point_3& p, const Point_3& q, const Point_3& r);
+  Triangle_3();
+  Triangle_3(const Point_3& p, const Point_3& q, const Point_3& r);
 
   const Point_3& v1() const;
   const Point_3& v2() const;

@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include "../include/Sphere_3.h"
-#include "../include/Triangles_3.h"
+#include "../include/Triangle_3.h"
 #include "../include/Ray_3.h"
 #include "../include/Color.h"
 #include "../include/Image.h"
@@ -52,9 +52,9 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
 
-        double Id = 100, rd = 0.6, Ia = 100, ra = 0.7, Ie = 100, re = 0.3, ns = 30, cos, cos2;
+        double Id = 100, rd = 0.8, Ia = 100, ra = 0.7, Ie = 100, re = 0.3, ns = 30, cos, cos2;
         Point_3 p = find_point(r.direction(), r.origin(), res.second);
-        Point_3 luz = Point_3(1.0, -1.0, 1.0);
+        Point_3 luz = Point_3(0.8, 0.4, -0.2);
         Vector_3 n = res.first->unit_normal(p);
         Vector_3 l = luz - p;
         Vector_3 d = (2 * dot_product(l, n) * n);
@@ -62,13 +62,14 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
         Vector_3 v = Vector_3(0.0, 0.0, 1);
         cos = std::max(cos0(l, n), 0.0);
         cos2 = std::max(cos0(r, v), 0.0);
-        /*Ray_3 olho =  Ray_3(p, l);
-        Object::Hit_pair sombra = res.first->hit(olho, 0, INF);
+
+        Ray_3 olho =  Ray_3(p, l);
+        Object::Hit_pair sombra = res.first->hit(olho, 1.0e-6, INF);
         if (sombra.first != NULL){
           //std::cout << "Tem sombra!" << std::endl;
           re = 0.0;
           rd = 0.0;
-        }*/
+        }
 
         return Color(clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns))),
                      clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns))) ,
@@ -119,47 +120,28 @@ Ray_3 construct_ray(int nx, int ny, int i, int j)
 
 int main(int argc, char *argv[])
 {
-  //Object::Hit_pair res;
   std::vector<Object*> object;
-  Image image(500, 500);
+  Image image(400, 400);
 
-  Point_3 centro = Point_3(0.0, 0.0, -1.0);
-  Point_3 teste = Point_3(0.5, -0.5, -1.0);
-  std::cout << teste << std::endl;
-  std::cout << rotacaoz(teste, 90) << std::endl;
-  double sizeTriangulo = 0.5;
+  int px = 5, py = 5;
+  double st = 0.1, ang = 90;
+  Point_3 A = Point_3(0.0, 0.0, -1.5);
+  Point_3 B = Point_3(-st, -st, -1.5);
+  Point_3 C = Point_3(-st, st, -1.5);
 
-  /*object.push_back(new Triangles_3(centro,
-                                   Point_3(-sizeTriangulo, -sizeTriangulo, -1.0),
-                                   Point_3(-sizeTriangulo, sizeTriangulo, -1.0)));
-  object.push_back(new Triangles_3(centro,
-                                   Point_3(-sizeTriangulo, sizeTriangulo, -1.0),
-                                   Point_3(sizeTriangulo, sizeTriangulo, -1.0)));
-  object.push_back(new Triangles_3(centro,
-                                   Point_3(sizeTriangulo, sizeTriangulo, -1.0),
-                                   Point_3(sizeTriangulo, -sizeTriangulo, -1.0)));
-  object.push_back(new Triangles_3(centro,
-                                   Point_3(sizeTriangulo, -sizeTriangulo, -1.0),
-                                   Point_3(-sizeTriangulo, -sizeTriangulo, -1.0)));*/
+  // Parede de Triangulos
+  for (int l = 0; l < px; l++){
+    for (int c = 0; c < py; c++){
+        for (int i = 0; i < 4; i++){
+            object.push_back(new Triangle_3(transladar(rotacaoz(A, ang*i), c*2*st, l*2*st),
+                                            transladar(rotacaoz(B, ang*i), c*2*st, l*2*st),
+                                            transladar(rotacaoz(C, ang*i), c*2*st, l*2*st)));
+        }
+    }
+  }
 
-  //object.push_back(new Sphere_3(Point_3(-0.5, 0.5, -2.0), 0.5));
-  //object.push_back(new Sphere_3(Point_3(-0.1, 0.9, -2.0), 0.3));
-  //object.push_back(new Sphere_3(Point_3(-0.1, 0.1, -2.0), 0.3));
-  //object.push_back(new Sphere_3(Point_3(1.0, -1.0, -1.0), 0.1));
-  //object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.1));
-  //object.push_back(new Sphere_3(Point_3(0.0, 0.0, -1.0), 0.3));
-  //object.push_back(new Sphere_3(Point_3(-0.4, 0.0, -1.0), 0.1));
-  //object.push_back(new Sphere_3(Point_3(0.5, 0.5, -1.0), 0.1));
-  //object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.1));
-  //object.push_back(new Sphere_3(Point_3(0.5, 0.0, -1.0), 0.3));
-  //object.push_back(new Sphere_3(Point_3(0.0, 0.5, -1.3), 0.4));
-  //object.push_back(new Sphere_3(Point_3(-0.8, 0.8, -1.0), 0.2));
-  //object.push_back(new Sphere_3(Point_3(0.8, 0.8, -1.0), 0.2));
-  //object.push_back(new Sphere_3(rotacaoz(Point_3(0.5, -0.5, -1.0), 90), 0.2));
-  //object.push_back(new Sphere_3(Point_3(0.5, -0.5, -1.0), 0.2));
-  //object.push_back(new Sphere_3(Point_3(0.5, 0.5, -1.0), 0.2));
-  //object.push_back(new Sphere_3(Point_3(0.5, 0.0, -1.0), 0.2));
-  //object.push_back(new Sphere_3(Point_3(-0.5, -0.5, -1.0), 0.2));
+  // Esfera na frente da parede
+  object.push_back(new Sphere_3(Point_3(0.4, 0.4, -1.0), 0.1));
 
   for (int i = 0; i < image.height(); ++i) {
     for (int j = 0; j < image.width(); ++j) {
