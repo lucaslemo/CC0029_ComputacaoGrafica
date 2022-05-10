@@ -64,9 +64,8 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
         cos2 = std::max(cos0(r, v), 0.0);
 
         Ray_3 olho =  Ray_3(p, l);
-        Object::Hit_pair sombra = res.first->hit(olho, 1.0e-6, INF);
+        Object::Hit_pair sombra = hit(olho, object, 1.0e-6, INF);
         if (sombra.first != NULL){
-          //std::cout << "Tem sombra!" << std::endl;
           re = 0.0;
           rd = 0.0;
         }
@@ -123,7 +122,7 @@ int main(int argc, char *argv[])
   std::vector<Object*> object;
   Image image(400, 400);
 
-  int px = 5, py = 5;
+  /*int px = 5, py = 5;
   double st = 0.1, ang = 90;
   Point_3 A = Point_3(0.0, 0.0, -1.5);
   Point_3 B = Point_3(-st, -st, -1.5);
@@ -138,10 +137,10 @@ int main(int argc, char *argv[])
                                             transladar(rotacaoz(C, ang*i), c*2*st, l*2*st)));
         }
     }
-  }
+  }*/
 
   // Esfera na frente da parede
-  object.push_back(new Sphere_3(Point_3(0.4, 0.4, -1.0), 0.1));
+  object.push_back(new Sphere_3(Point_3(0.5, 0.5, -1.0), 0.6));
 
   for (int i = 0; i < image.height(); ++i) {
     for (int j = 0; j < image.width(); ++j) {
