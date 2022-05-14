@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <windows.h>
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -19,6 +20,7 @@ std::string program_name;
 int maxval;
 GLsizei width, height;
 GLubyte *imgrtx;
+GLubyte **gifrtx;
 
 Object::Hit_pair
 hit(const Ray_3& r, std::vector<Object*>& object,
@@ -52,9 +54,22 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
   Object::Hit_pair res = hit(r, object, tmin, tmax);
   if (res.first != NULL) {
 
-        double Id = 100, rd = 0.8, Ia = 100, ra = 0.7, Ie = 100, re = 0.3, ns = 30, cos, cos2;
+        double Id = 50, rd = 0.8, Ia = 50, ra = 0.8, Ie = 30, re = 0.2, ns = 4, cos, cos2;
+        double red = 127.0/255.0, green = 255.0/255.0, blue = 212.0/255.0;
+        if (res.first->check() == 0.2 ){
+            red = 255.0/255.0;
+            green = 0.0/255.0;
+            blue = 212.0/255.0;
+            Id = 100;
+            rd = 0.8;
+            Ia = 100;
+            ra = 0.7;
+            Ie = 100;
+            re = 1.0;
+            ns = 70;
+        }
         Point_3 p = find_point(r.direction(), r.origin(), res.second);
-        Point_3 luz = Point_3(0.8, 0.4, -0.2);
+        Point_3 luz = Point_3(1.0, -1.0, -1.0);
         Vector_3 n = res.first->unit_normal(p);
         Vector_3 l = luz - p;
         Vector_3 d = (2 * dot_product(l, n) * n);
@@ -70,9 +85,9 @@ Color trace(const Ray_3& r, std::vector<Object*>& object,
           rd = 0.0;
         }
 
-        return Color(clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns))),
-                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns))) ,
-                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns))));
+        return Color(clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * red),
+                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * green) ,
+                     clamp((Id*rd*cos + Ia*ra + Ie*re*pow(cos2, ns)) * blue));
 
         //Colorindo apartir da Normal
         /*Point_3 p = find_point(r.direction(), r.origin(), res.second);
@@ -117,10 +132,9 @@ Ray_3 construct_ray(int nx, int ny, int i, int j)
   return Ray_3(origin, direction);
 }
 
-int main(int argc, char *argv[])
-{
-  std::vector<Object*> object;
-  Image image(400, 400);
+int imagem(){
+    std::vector<Object*> object;
+  Image image(700, 700);
 
   /*int px = 5, py = 5;
   double st = 0.1, ang = 90;
@@ -140,7 +154,8 @@ int main(int argc, char *argv[])
   }*/
 
   // Esfera na frente da parede
-  object.push_back(new Sphere_3(Point_3(0.5, 0.5, -1.0), 0.6));
+  object.push_back(new Sphere_3(moverz(Point_3(0.0, 0.3, 0.0), -1.5), 0.6));
+  object.push_back(new Sphere_3(moverz(rotacaoz(Point_3(0.5, -0.5, 0.0), 0.0), -1.0), 0.15));
 
   for (int i = 0; i < image.height(); ++i) {
     for (int j = 0; j < image.width(); ++j) {
@@ -191,5 +206,69 @@ int main(int argc, char *argv[])
   image.write_ppm(file);
   file.close();
 
+  return 0;
+}
+
+int imagem2(){
+  int qtd = 375;
+  std::vector<Image*> gif;
+  gifrtx = (GLubyte**)malloc(sizeof(GLubyte*) * qtd);
+
+  for (int l = 0; l < qtd; l++){
+    gif.push_back(new Image(600, 600));
+    std::vector<Object*> object;
+    object.push_back(new Sphere_3(moverz(Point_3(0.0, 0.0, 0.0), -1.0), 0.3));
+    object.push_back(new Sphere_3(moverz(rotacaoz(Point_3(0.0, -0.7, 0.0), -0.96*l), -1.0), 0.2));
+
+    for (int i = 0; i < gif[l]->height(); ++i) {
+        for (int j = 0; j < gif[l]->width(); ++j) {
+          Ray_3 r = construct_ray(gif[l]->width(), gif[l]->height(), i, j);
+          Color c = trace(r, object);
+          gif[l]->set_pixel(i, j, c);
+        }
+    }
+
+      width = GLint(gif[l]->width());
+      height = GLint(gif[l]->height());
+      gifrtx[l] = new GLubyte[3 * width * height];
+      gif[l]->create_image(gifrtx[l]);
+  }
+
+  GLFWwindow* window;
+
+  if (!glfwInit())
+        return -1;
+
+  window = glfwCreateWindow(width, height, "Image Viewer", NULL, NULL);
+
+  glfwMakeContextCurrent(window);
+
+  // Loop da janela
+  int aux = 0;
+  while (!glfwWindowShouldClose(window)){
+    if (aux >= qtd)
+        aux = 0;
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glRasterPos2i(-1, -1);
+    glDrawBuffer(GL_BACK);
+    glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, gifrtx[aux]);
+
+    glfwSwapBuffers(window);
+
+    glfwPollEvents();
+    aux++;
+    Sleep(13);
+  }
+
+  glfwTerminate();
+
+  return 0;
+}
+
+int main(int argc, char *argv[])
+{
+  //imagem();
+  imagem2();
   return 0;
 }

@@ -44,11 +44,11 @@ Sphere_3::hit(const Ray_3& r, double tmin, double tmax) const
         if (raiz_1 < raiz_2){
           if (tmin <= raiz_1 && raiz_1 <= tmax)
             return Hit_pair (this, raiz_1);
-        }   
+        }
         else{
           if (tmin <= raiz_2 && raiz_2 <= tmax)
               return Hit_pair (this, raiz_2);
-        }  
+        }
     }
     return Hit_pair (NULL, 1);
 }
@@ -64,4 +64,9 @@ Sphere_3::unit_normal(const Point_3& p) const
 {
   Vector_3 n = Vector_3(p - center());
   return (n / radius());
+}
+
+double
+Sphere_3::check() const{
+    return radius();
 }

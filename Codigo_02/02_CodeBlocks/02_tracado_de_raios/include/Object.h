@@ -20,6 +20,9 @@ public:
 
   virtual Vector_3 unit_normal(const Point_3& p) const
     { return Vector_3(p - Point_3(1,0,0)); };
+
+  virtual double check() const
+    { return 0.0; };
 };
 
 #endif // OBJECT_H

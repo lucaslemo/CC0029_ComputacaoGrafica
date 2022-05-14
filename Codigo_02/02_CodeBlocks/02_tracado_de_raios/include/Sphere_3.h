@@ -24,6 +24,7 @@ public:
   Hit_pair hit(const Ray_3& r, double tmin = 0.0, double tmax = INF) const;
   Vector_3 normal(const Point_3& p) const;
   Vector_3 unit_normal(const Point_3& p) const;
+  double check() const;
 
 private:
   Point_3 _center;
