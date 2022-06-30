@@ -17,10 +17,14 @@ class Scene
 {
 public:
     Scene()
-    { _width = 400; _height = 400; }
+    {
+        _width  = 400;
+        _height = 400;
+        _orbit  = glm::mat4(1.0f);
+    }
 
     Scene(GLuint w, GLuint h)
-        : _width(w), _height(h)
+        : _width(w), _height(h), _orbit(1.0f)
     { }
 
     void set_projection(GLfloat fov, GLfloat aspect, GLfloat near, GLfloat far)
@@ -42,10 +46,10 @@ public:
 
     void set_shader(const char* vspath, const char* fspath)
     { _shader = Shader(vspath, fspath); }
-    
+        
     void render()
     {      
-        glUniformMatrix4fv(glGetUniformLocation(_shader.id(), "view"), 1, GL_FALSE, glm::value_ptr(_view.get_matrix()));
+        glUniformMatrix4fv(glGetUniformLocation(_shader.id(), "view"), 1, GL_FALSE, glm::value_ptr(_view.get_matrix()*_orbit)); // multiply view and orbit matrices
         glUniformMatrix4fv(glGetUniformLocation(_shader.id(), "projection"), 1, GL_FALSE, glm::value_ptr(_projection.get_matrix()));
         
         // pass light to vertex shader
@@ -82,7 +86,11 @@ public:
     {
         return _model[i];
     }
-
+    
+    void set_orbit(glm::mat4& m)
+    {
+        _orbit = m;
+    }
 
 private:
     GLuint             _width, _height;
@@ -91,6 +99,7 @@ private:
     Light              _light;
     Shader             _shader;
     std::vector<Model> _model;
+    glm::mat4          _orbit;
 };
 #endif // SCENE_H
 

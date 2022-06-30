@@ -58,15 +58,17 @@ public:
             _mesh[i].render(shader, _matrix);
         }
     }
-
-    glm::mat4& get_matrix(){
-        return _matrix;
-    }
-  
+    
     void set_matrix(glm::mat4& m)
     {
         _matrix = m;
     }
+    
+    glm::mat4& get_matrix()
+    {
+        return _matrix;
+    }
+
     
     size_t number_of_meshes()
     { return _mesh.size(); }

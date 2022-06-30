@@ -17,19 +17,34 @@
 #include <Mesh.h>
 #include <Shader.h>
 #include <Scene.h>
+#include <TrackBall.h>
+
+enum {
+    MODE_IDLE = 0,
+    MODE_ORBITING,
+    MODE_ZOOMING,
+    MODE_PANNING
+};
 
 std::string program_name;
-GLsizei width, height; // window size
+GLsizei width, height, status; // window size
+
 float theta = 0;
+float theta2[2] = {0, 0};
 float head_mov[2] = {0, 0};
 int rotate = 1;
-int pulo = 0;
+int pulo[2] = {0, 0};
+glm::mat4 posSteve;
+glm::mat4 posSteve2;
 
 void idle();
 
 class MyScene : public Scene
 {
 public:
+    MyScene()
+        : _theta(0.0) { }
+    
     void rotate_steve(int steve){
       glm::vec3 head_RotationAxis = leg_top_center(0);
 
@@ -58,8 +73,29 @@ public:
 
     void jump(int steve){
         glm::mat4 pula = model(steve).get_matrix();
-        pula = glm::translate(pula, glm::vec3(0.0,0.4,0.0));
-        model(steve).set_matrix(pula);
+        if (theta2[steve] >= 2*M_PI){
+          if (steve == 0){
+            pula = glm::translate(posSteve, glm::vec3(0.0,0.0,0.0));
+            model(steve).set_matrix(pula);
+          }
+          else{
+            pula = glm::translate(posSteve2, glm::vec3(0.0,0.0,0.0));
+            model(steve).set_matrix(pula);
+          }
+          theta2[steve] = 0;
+          pulo[steve] = 0;
+          std::cout << glm::to_string(model(steve).get_matrix()) << std::endl;
+          return;
+        }
+        else if (std::sin(theta2[steve]) >= 0){
+          pula = glm::translate(pula, glm::vec3(0.0,0.3,0.0));
+          model(steve).set_matrix(pula);
+        }
+        else if (std::sin(theta2[steve]) < 0){
+          pula = glm::translate(pula, glm::vec3(0.0,-0.3,0.0));
+          model(steve).set_matrix(pula);
+        }
+        theta2[steve] += 2*M_PI/10;
     }
 
     void walk_forward(int steve)
@@ -99,16 +135,16 @@ public:
         model(steve).set_matrix(anda);
     }
 
-    glm::vec3 leg_top_center(int leg)
+private:
+    
+    glm::vec3 leg_top_center(int n)
     {
        // compute bounding box
        GLfloat xmin(0), xmax(0), ymin(0), ymax(0), zmin(0), zmax(0);
        
-       Mesh& mesh = model(0).mesh(leg);
+       Mesh& mesh = model(0).mesh(n);
        for (size_t i = 0; i < mesh.number_of_vertices(); ++i) {
            glm::vec3 p = mesh.vertex(i).Position;
-           
-           std::cout << glm::to_string(p) << std::endl;
            
            xmax = std::max(xmax, p.x);
            xmin = std::min(xmin, p.x);
@@ -122,9 +158,13 @@ public:
                         ymax,
                         0.5*(zmin + zmax));
     }
+    
+private:
+    GLfloat _theta;
 };
 
 MyScene scene;
+TrackBall* trackball;
 
 // Called when the window is resized
 void
@@ -133,6 +173,12 @@ window_resized(GLFWwindow *window, int width, int height);
 // Called for keyboard events
 void
 keyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+// Called for mouse events
+void
+mouse_button(GLFWwindow* window, int button, int action, int mods);
+
+void mouse_motion(GLFWwindow* window, double x, double y);
 
 // Render scene
 void
@@ -175,6 +221,12 @@ main(int argc, char *argv[])
   
   // Register a callback function for keyboard pressed events
   glfwSetKeyCallback(window, &keyboard);
+  
+  // Register a callback function for mouse buttons events
+  glfwSetMouseButtonCallback(window, mouse_button);
+
+  // Register a callback function for mouse move events
+  glfwSetCursorPosCallback(window, mouse_motion);
 
   // Make the window's context current
   glfwMakeContextCurrent(window);
@@ -218,6 +270,8 @@ display(GLFWwindow* window)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
+    scene.set_orbit(trackball->matrix());
+
     scene.render();
 
     // Swap front and back buffers
@@ -227,40 +281,40 @@ display(GLFWwindow* window)
 void
 initialize()
 {
-  glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 
-  // set projection
-  scene.set_projection(45.0, (float)width/(float)height, 1.0, 100.0);
+    // set projection
+    scene.set_projection(45.0, (float)width/(float)height, 1.0, 100.0);
 
-  // set view
-  glm::vec3 eye(6.0,5.0,6.0);
-  glm::vec3 at(0.0,0.0,-1.0);
-  glm::vec3 up(0.0,1.0,0.0);
-  scene.set_view(eye,at,up);
+    // set view
+    glm::vec3 eye(6.0,5.0,6.0);
+    glm::vec3 at(0.0,0.0,-1.0);
+    glm::vec3 up(0.0,1.0,0.0);
+    scene.set_view(eye,at,up);
 
-  // add model from OBJ    
-  scene.add_model("Data/Steve.obj");
-  scene.add_model("Data/Steve2.obj");
+    // setting up a virtual trackball
+    trackball = new TrackBall(width,height);
 
-  // set model matrix
-  glm::mat4 matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-10.5f, -4.0f, -10.0f));
-  glm::mat4 matrix2 = glm::translate(glm::mat4(1.0f), glm::vec3(-3.5f, -4.0f, -10.0f));
-  scene.model(0).set_matrix(matrix);
-  scene.model(1).set_matrix(matrix2);
-  
-  std::cout << "Number of models: " << scene.number_of_models() << std::endl;
-  
-  // set scene light
-  Light light = {
-    glm::vec3(1.2f, 1.0f, 2.0f), // position
-    glm::vec4(0.3f, 0.3f, 0.3f, 1.0f), // ambient
-    glm::vec4(0.7f, 0.7f, 0.7f, 1.0f), // diffuse
-    glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), // specular
-  };
-  
-  scene.set_light(light);
+    // set scene light
+    Light light = {
+        glm::vec3(1.2f, 1.0f, 2.0f), // position
+        glm::vec4(0.3f, 0.3f, 0.3f, 1.0f), // ambient
+        glm::vec4(0.7f, 0.7f, 0.7f, 1.0f), // diffuse
+        glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), // specular
+    };
+    scene.set_light(light);
 
-  scene.set_shader("Sources/shaders/vertex.glsl", "Sources/shaders/fragment.glsl");
+    scene.set_shader("Sources/shaders/vertex.glsl", "Sources/shaders/fragment.glsl");
+    
+    // add model from OBJ    
+    scene.add_model("Data/Steve.obj");
+    scene.add_model("Data/Steve2.obj");
+
+    // set model matrix
+    glm::mat4 matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-10.5f, -4.0f, -10.0f));
+     glm::mat4 matrix2 = glm::translate(glm::mat4(1.0f), glm::vec3(-3.5f, -4.0f, -10.0f));
+    scene.model(0).set_matrix(matrix);
+    scene.model(1).set_matrix(matrix2);
 }
 
 // Called when the window is resized
@@ -272,7 +326,9 @@ window_resized(GLFWwindow* window, int width, int height)
 
   // Set the viewport
   glViewport(0, 0, width, height);
-
+  
+  scene.set_projection(45.0, (float)width/(float)height, 1.0, 100.0);
+  
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glfwSwapBuffers(window);
 }
@@ -283,7 +339,7 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
   switch (key) {
     case GLFW_KEY_UP:
-      if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+    if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         // Steve Normal
         std::cout << "caminha para frente\n";
         scene.walk_forward(0);        
@@ -303,6 +359,12 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
         std::cout << "Rotaciona para a Esquerda\n";
         rotate = 1;
         scene.rotate_steve(0);  
+      }
+      case GLFW_KEY_KP_8:
+      if (action == GLFW_PRESS) {
+        // Steve Normal
+        std::cout << "Faz o steve pular\n";
+        pulo[0] = 1;
       }
       break;
       case GLFW_KEY_W:
@@ -346,26 +408,73 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
         scene.move_head(1);        
       }
       break;
-      case GLFW_KEY_P:
+      case GLFW_KEY_SPACE:
       if (action == GLFW_PRESS) {
         // Anti Steve
         std::cout << "Faz o steve pular\n";
-        pulo = 1;
+        posSteve2 = scene.model(1).get_matrix();
+        std::cout << 
+        pulo[1] = 1;
+      }
+      break;
+    case GLFW_KEY_I:
+      if (action == GLFW_PRESS) {
+        std::cout << "reset view.\n";   
+        trackball->reset();
+      }
+      break;
+    case GLFW_KEY_O:
+      if (action == GLFW_PRESS) {
+        status = MODE_ORBITING;
+        std::cout << "entering ORBIT mode.\n";
       }
       break;
     case GLFW_KEY_ESCAPE:
       if (action == GLFW_PRESS) {
-        // Sai do programa
         glfwTerminate();
         exit(0);
+      }
+    case GLFW_KEY_P:
+      if (action == GLFW_PRESS) {
+        status = MODE_IDLE;
+        std::cout << "entering IDLE mode.\n";
       }
     default:
       break;
   }
 }
 
+void mouse_button(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button != GLFW_MOUSE_BUTTON_LEFT)
+		return;
+	
+	switch (action) {
+		case GLFW_PRESS:
+			double x, y;
+         	glfwGetCursorPos(window, &x, &y);
+         	std::cout << "cursor position: " << x << ", " << y << std::endl;
+         	if (status == MODE_ORBITING)
+         	    trackball->start(x, y);
+			break;
+		case GLFW_RELEASE:
+       		if (status == MODE_ORBITING)
+		    	trackball->stop();
+			break;
+   }
+}
+
+void mouse_motion(GLFWwindow* window, double x, double y)
+{
+    if (trackball->dragging())
+        trackball->drag(x, y);
+}
+
 void idle(){
-  if(pulo){
+  if(pulo[0]){
+    scene.jump(0);
+  }
+  if(pulo[1]){
     scene.jump(1);
   }
 }

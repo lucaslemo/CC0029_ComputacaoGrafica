@@ -37,7 +37,7 @@ void main()
     
     // compute terms from Blinn-Phong illumination model
     vec4 ambient = material.ambient * light.ambient;
-    
+ 
     //vec4 diffuse = material.diffuse * light.diffuse * max(dot(L, N), 0.0);
     vec4 diffuse = material.diffuse * texture2D(fSampler, texCoord);
     

@@ -9,6 +9,7 @@ CMakeFiles/glview.dir/Sources/main.cpp.o: Includes/Model.h
 CMakeFiles/glview.dir/Sources/main.cpp.o: Includes/Projection.h
 CMakeFiles/glview.dir/Sources/main.cpp.o: Includes/Scene.h
 CMakeFiles/glview.dir/Sources/main.cpp.o: Includes/Shader.h
+CMakeFiles/glview.dir/Sources/main.cpp.o: Includes/TrackBall.h
 CMakeFiles/glview.dir/Sources/main.cpp.o: Includes/View.h
 CMakeFiles/glview.dir/Sources/main.cpp.o: Includes/stb_image.h
 

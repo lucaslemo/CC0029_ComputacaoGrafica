@@ -1,4 +1,4 @@
-# Install script for directory: /nfs/home/lucas02/Downloads/Cg/glview-model
+# Install script for directory: /nfs/home/lucas02/Downloads/Cg/Projeto
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/nfs/home/lucas02/Downloads/Cg/glview-model/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/nfs/home/lucas02/Downloads/Cg/Projeto/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

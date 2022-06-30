@@ -39,6 +39,13 @@ public:
     {
         return _matrix;
     }
+    
+    // Accesss
+    void set_matrix(glm::mat4& m)
+    {
+        _matrix = m;
+    }
+
 
 private:
     // Projection Attributes

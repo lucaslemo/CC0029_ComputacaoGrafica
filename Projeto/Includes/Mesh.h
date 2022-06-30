@@ -79,7 +79,7 @@ public:
     {
         _material = m;
     }
-
+    
     void set_matrix(glm::mat4& m)
     {
         _matrix = m;

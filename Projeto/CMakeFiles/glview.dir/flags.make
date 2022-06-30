@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/nfs/home/lucas02/Downloads/Cg/glview-model/Includes -I/usr/lib
+CXX_INCLUDES = -I/nfs/home/lucas02/Downloads/Cg/Projeto/Includes -I/usr/lib
 
 CXX_FLAGS = 
 

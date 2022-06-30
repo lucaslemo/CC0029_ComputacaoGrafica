@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/nfs/home/lucas02/Downloads/Cg/glview-model/Sources/main.cpp
+/nfs/home/lucas02/Downloads/Cg/Projeto/Sources/main.cpp
 iostream
 -
 fstream
@@ -38,6 +38,8 @@ Mesh.h
 Shader.h
 -
 Scene.h
+-
+TrackBall.h
 -
 
 Includes/Light.h
@@ -122,6 +124,16 @@ fstream
 sstream
 -
 iostream
+-
+
+Includes/TrackBall.h
+GL/glew.h
+-
+glm/glm.hpp
+-
+glm/gtc/matrix_transform.hpp
+-
+vector
 -
 
 Includes/View.h
