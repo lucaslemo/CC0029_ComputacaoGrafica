@@ -7,6 +7,13 @@
 #include <cmath>
 #include <cassert>
 
+#include <iostream>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif // _WIN32
+
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -34,8 +41,18 @@ float theta2[2] = {0, 0};
 float head_mov[2] = {0, 0};
 int rotate = 1;
 int pulo[2] = {0, 0};
-glm::mat4 posSteve;
-glm::mat4 posSteve2;
+int parado = 1;
+glm::mat4 jumpOrigin;
+glm::mat4 jumpOrigin2;
+
+void sleepcp(int milliseconds) // Cross-platform sleep function
+{
+    #ifdef _WIN32
+        Sleep(milliseconds);
+    #else
+        usleep(milliseconds * 1000);
+    #endif // _WIN32
+}
 
 void idle();
 
@@ -73,29 +90,20 @@ public:
 
     void jump(int steve){
         glm::mat4 pula = model(steve).get_matrix();
+        pula = glm::translate(pula, glm::vec3(0.0,std::sin(theta2[steve]),0.0));
+        model(steve).set_matrix(pula);
+
         if (theta2[steve] >= 2*M_PI){
-          if (steve == 0){
-            pula = glm::translate(posSteve, glm::vec3(0.0,0.0,0.0));
-            model(steve).set_matrix(pula);
-          }
-          else{
-            pula = glm::translate(posSteve2, glm::vec3(0.0,0.0,0.0));
-            model(steve).set_matrix(pula);
-          }
           theta2[steve] = 0;
           pulo[steve] = 0;
+          if (steve == 0)
+            model(steve).set_matrix(jumpOrigin);
+          else if (steve == 1)
+            model(steve).set_matrix(jumpOrigin2);
           std::cout << glm::to_string(model(steve).get_matrix()) << std::endl;
-          return;
         }
-        else if (std::sin(theta2[steve]) >= 0){
-          pula = glm::translate(pula, glm::vec3(0.0,0.3,0.0));
-          model(steve).set_matrix(pula);
-        }
-        else if (std::sin(theta2[steve]) < 0){
-          pula = glm::translate(pula, glm::vec3(0.0,-0.3,0.0));
-          model(steve).set_matrix(pula);
-        }
-        theta2[steve] += 2*M_PI/10;
+        
+        theta2[steve] += 2*M_PI/25;
     }
 
     void walk_forward(int steve)
@@ -133,6 +141,7 @@ public:
         glm::mat4 anda = model(steve).get_matrix();
         anda = glm::translate(anda, glm::vec3(0.4,0.0,0.0));
         model(steve).set_matrix(anda);
+        parado = 1;
     }
 
 private:
@@ -245,6 +254,7 @@ main(int argc, char *argv[])
   // Initialize the scene to be rendered
   initialize();
   
+  double lasttime = glfwGetTime();
   // Loop until the user closes the window
   while (!glfwWindowShouldClose(window))
   {
@@ -256,6 +266,11 @@ main(int argc, char *argv[])
 
     //idl scene
     idle();
+
+     while (glfwGetTime() < lasttime + 1.0/60.0) {
+        // TODO: Put the thread to sleep, yield, or simply do nothing
+    }
+    lasttime += 1.0/60.0;
   }
   
   // Terminate GLFW
@@ -287,7 +302,7 @@ initialize()
     scene.set_projection(45.0, (float)width/(float)height, 1.0, 100.0);
 
     // set view
-    glm::vec3 eye(6.0,5.0,6.0);
+    glm::vec3 eye(16.0,15.0,16.0);
     glm::vec3 at(0.0,0.0,-1.0);
     glm::vec3 up(0.0,1.0,0.0);
     scene.set_view(eye,at,up);
@@ -309,12 +324,15 @@ initialize()
     // add model from OBJ    
     scene.add_model("Data/Steve.obj");
     scene.add_model("Data/Steve2.obj");
+    scene.add_model("Data/chao.obj");
 
     // set model matrix
-    glm::mat4 matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-10.5f, -4.0f, -10.0f));
-     glm::mat4 matrix2 = glm::translate(glm::mat4(1.0f), glm::vec3(-3.5f, -4.0f, -10.0f));
+    glm::mat4 matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-10.5f, -6.0f, -10.0f));
+     glm::mat4 matrix2 = glm::translate(glm::mat4(1.0f), glm::vec3(-3.5f, -6.0f, -10.0f));
     scene.model(0).set_matrix(matrix);
     scene.model(1).set_matrix(matrix2);
+    scene.model(2).set_matrix(matrix);
+
 }
 
 // Called when the window is resized
@@ -360,10 +378,12 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
         rotate = 1;
         scene.rotate_steve(0);  
       }
+      break;
       case GLFW_KEY_KP_8:
-      if (action == GLFW_PRESS) {
+      if (action == GLFW_PRESS && pulo[0] == 0) {
         // Steve Normal
         std::cout << "Faz o steve pular\n";
+        jumpOrigin = scene.model(0).get_matrix();
         pulo[0] = 1;
       }
       break;
@@ -371,7 +391,8 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
       if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         // Anti Steve 
         std::cout << "caminha para frente\n";
-        scene.walk_forward(1);        
+        scene.walk_forward(1);
+        parado = 0; 
       }
       break;
       case GLFW_KEY_D:
@@ -409,11 +430,11 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
       }
       break;
       case GLFW_KEY_SPACE:
-      if (action == GLFW_PRESS) {
+      if (action == GLFW_PRESS && pulo[1] == 0) {
         // Anti Steve
         std::cout << "Faz o steve pular\n";
-        posSteve2 = scene.model(1).get_matrix();
-        std::cout << 
+        std::cout << glm::to_string(scene.model(1).get_matrix()) << std::endl;
+        jumpOrigin2 = scene.model(1).get_matrix();
         pulo[1] = 1;
       }
       break;
@@ -476,6 +497,9 @@ void idle(){
   }
   if(pulo[1]){
     scene.jump(1);
+  }
+  if(parado){
+    
   }
 }
 
