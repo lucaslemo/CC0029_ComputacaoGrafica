@@ -7,7 +7,6 @@
 #include <cmath>
 #include <cassert>
 
-#include <iostream>
 #ifdef _WIN32
     #include <windows.h>
 #else
@@ -36,12 +35,12 @@ enum {
 std::string program_name;
 GLsizei width, height, status; // window size
 
-float theta = 0;
+float theta[2] = {0, 0};
 float theta2[2] = {0, 0};
 float head_mov[2] = {0, 0};
 int rotate = 1;
 int pulo[2] = {0, 0};
-int parado = 1;
+int parado[2] = {1, 1};
 glm::mat4 jumpOrigin;
 glm::mat4 jumpOrigin2;
 
@@ -61,19 +60,56 @@ class MyScene : public Scene
 public:
     MyScene()
         : _theta(0.0) { }
+
+    void parar(int steve){
+      if (theta != 0){
+        glm::vec3 legL_RotationAxis = leg_top_center(2);
+        glm::vec3 legR_RotationAxis = leg_top_center(5);
+        glm::vec3 armL_RotationAxis = leg_top_center(3);
+        glm::vec3 armR_RotationAxis = leg_top_center(4);
+        
+        // we know meshes #2 and #5 are left and right legs, respectively
+        glm::mat4 matrixL = glm::translate(glm::mat4(1.0f), legL_RotationAxis);
+        glm::mat4 matrixR = glm::translate(glm::mat4(1.0f), legR_RotationAxis);
+        glm::mat4 matrixAL = glm::translate(glm::mat4(1.0f), armL_RotationAxis);
+        glm::mat4 matrixAR = glm::translate(glm::mat4(1.0f), armR_RotationAxis);
+
+        if (std::sin(theta[steve]) > 0){
+          theta[steve] -= 2*M_PI/30;
+          if (std::sin(theta[steve]) <= 0)
+            theta[steve] = 0;
+        }
+        else if(std::sin(theta[steve]) < 0){
+          theta[steve] += 2*M_PI/30;
+          if (std::sin(theta[steve]) >= 2*M_PI)
+            theta[steve] = 0;
+        }
+        
+        
+        matrixL = glm::rotate(matrixL, std::sin(theta[steve]), glm::vec3(0.0,0.0,1.0));
+        matrixR = glm::rotate(matrixR, std::sin(theta[steve]), glm::vec3(0.0,0.0,-1.0));
+        matrixAL = glm::rotate(matrixAL, std::sin(theta[steve]), glm::vec3(0.0,0.0,-1.0));
+        matrixAR = glm::rotate(matrixAR, std::sin(theta[steve]), glm::vec3(0.0,0.0,1.0));
+
+        matrixL = glm::translate(matrixL, -legL_RotationAxis);
+        matrixR = glm::translate(matrixR, -legR_RotationAxis);
+        matrixAL = glm::translate(matrixAL, -armL_RotationAxis);
+        matrixAR = glm::translate(matrixAR, -armR_RotationAxis);
+        
+        model(steve).mesh(2).set_matrix(matrixL);
+        model(steve).mesh(5).set_matrix(matrixR);
+        model(steve).mesh(3).set_matrix(matrixAL);
+        model(steve).mesh(4).set_matrix(matrixAR);
+      }
+    }
     
     void rotate_steve(int steve){
       glm::vec3 head_RotationAxis = leg_top_center(0);
-
       glm::mat4 matrixRotate = glm::translate(glm::mat4(1.0f), head_RotationAxis);
-
       matrixRotate = glm::rotate(matrixRotate, 0.1f*rotate, glm::vec3(0.0,1.0,0.0));
-
       matrixRotate = glm::translate(matrixRotate, -head_RotationAxis);
-      
       glm::mat4 model_matrix = model(steve).get_matrix();
       glm::mat4 update = model_matrix*matrixRotate;
-
       model(steve).set_matrix(update);
     }
 
@@ -81,7 +117,6 @@ public:
       glm::vec3 head_RotationAxis = leg_top_center(0);
       glm::mat4 matrixH = glm::translate(glm::mat4(1.0f), head_RotationAxis);
       matrixH = glm::rotate(matrixH, head_mov[steve], glm::vec3(0.0,1.0,0.0));
-
       std::cout << head_mov[steve] << std::endl;
       matrixH = glm::translate(matrixH, -head_RotationAxis);
       model(steve).mesh(0).set_matrix(matrixH);
@@ -100,10 +135,9 @@ public:
             model(steve).set_matrix(jumpOrigin);
           else if (steve == 1)
             model(steve).set_matrix(jumpOrigin2);
-          std::cout << glm::to_string(model(steve).get_matrix()) << std::endl;
         }
         
-        theta2[steve] += 2*M_PI/25;
+        theta2[steve] += 2*M_PI/15;
     }
 
     void walk_forward(int steve)
@@ -119,14 +153,14 @@ public:
         glm::mat4 matrixAL = glm::translate(glm::mat4(1.0f), armL_RotationAxis);
         glm::mat4 matrixAR = glm::translate(glm::mat4(1.0f), armR_RotationAxis);
         
-        matrixL = glm::rotate(matrixL, std::sin(theta), glm::vec3(0.0,0.0,1.0));
-        matrixR = glm::rotate(matrixR, std::sin(theta), glm::vec3(0.0,0.0,-1.0));
-        matrixAL = glm::rotate(matrixAL, std::sin(theta), glm::vec3(0.0,0.0,-1.0));
-        matrixAR = glm::rotate(matrixAR, std::sin(theta), glm::vec3(0.0,0.0,1.0));
+        matrixL = glm::rotate(matrixL, std::sin(theta[steve]), glm::vec3(0.0,0.0,1.0));
+        matrixR = glm::rotate(matrixR, std::sin(theta[steve]), glm::vec3(0.0,0.0,-1.0));
+        matrixAL = glm::rotate(matrixAL, std::sin(theta[steve]), glm::vec3(0.0,0.0,-1.0));
+        matrixAR = glm::rotate(matrixAR, std::sin(theta[steve]), glm::vec3(0.0,0.0,1.0));
         
-        theta += 2*M_PI/30;
-        if (theta >= 2*M_PI)
-          theta = 0;
+        theta[steve] += 2*M_PI/30;
+        if (theta[steve] >= 2*M_PI)
+          theta[steve] = 0;
 
         matrixL = glm::translate(matrixL, -legL_RotationAxis);
         matrixR = glm::translate(matrixR, -legR_RotationAxis);
@@ -141,7 +175,6 @@ public:
         glm::mat4 anda = model(steve).get_matrix();
         anda = glm::translate(anda, glm::vec3(0.4,0.0,0.0));
         model(steve).set_matrix(anda);
-        parado = 1;
     }
 
 private:
@@ -328,7 +361,7 @@ initialize()
 
     // set model matrix
     glm::mat4 matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-10.5f, -6.0f, -10.0f));
-     glm::mat4 matrix2 = glm::translate(glm::mat4(1.0f), glm::vec3(-3.5f, -6.0f, -10.0f));
+    glm::mat4 matrix2 = glm::translate(glm::mat4(1.0f), glm::vec3(-3.5f, -6.0f, -10.0f));
     scene.model(0).set_matrix(matrix);
     scene.model(1).set_matrix(matrix2);
     scene.model(2).set_matrix(matrix);
@@ -360,7 +393,11 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         // Steve Normal
         std::cout << "caminha para frente\n";
-        scene.walk_forward(0);        
+        scene.walk_forward(0);
+        parado[0] = 0;
+      }
+      else if(action == GLFW_RELEASE){
+        parado[0] = 1;
       }
       break;
       case GLFW_KEY_RIGHT:
@@ -392,13 +429,16 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
         // Anti Steve 
         std::cout << "caminha para frente\n";
         scene.walk_forward(1);
-        parado = 0; 
+        parado[1] = 0;
+      }
+      else if(action == GLFW_RELEASE){
+        parado[1] = 1;
       }
       break;
       case GLFW_KEY_D:
       if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         // Anti Steve
-        std::cout << "Move\n";
+        std::cout << "Rotaciona para a Direita\n";
         rotate = -1;
         scene.rotate_steve(1);        
       }
@@ -406,7 +446,7 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
       case GLFW_KEY_A:
       if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         // Anti Steve
-        std::cout << "Move\n";
+        std::cout << "Rotaciona para a Esquerda\n";
         rotate = 1;
         scene.rotate_steve(1);        
       }
@@ -433,7 +473,6 @@ keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
       if (action == GLFW_PRESS && pulo[1] == 0) {
         // Anti Steve
         std::cout << "Faz o steve pular\n";
-        std::cout << glm::to_string(scene.model(1).get_matrix()) << std::endl;
         jumpOrigin2 = scene.model(1).get_matrix();
         pulo[1] = 1;
       }
@@ -498,8 +537,11 @@ void idle(){
   if(pulo[1]){
     scene.jump(1);
   }
-  if(parado){
-    
+  if(parado[0]){
+    scene.parar(0);
+  }
+  if(parado[1]){
+    scene.parar(1);
   }
 }
 
